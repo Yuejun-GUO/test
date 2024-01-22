@@ -75,4 +75,6 @@ function selectedFilesRail(inputFileID) {
     }
 }
 
-
+Git.prototype.binaryCatFile = function() {
+   return this._catFile('buffer', arguments);
+};
