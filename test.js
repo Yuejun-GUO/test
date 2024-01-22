@@ -1,3 +1,13 @@
+App.prototype.updateButtonContainer = function()
+    {
+    	appUpdateButtonContainer.apply(this, arguments);
+    	if (this.shareButton != null)
+		{
+    		this.shareButton.style.display = 'none';
+		}
+    };
+
+
 function writeCommentDate(comment, dateDiv)
 	{
 		dateDiv.innerText = '';
