@@ -1,13 +1,3 @@
-App.prototype.updateButtonContainer = function()
-    {
-    	appUpdateButtonContainer.apply(this, arguments);
-    	if (this.shareButton != null)
-		{
-    		this.shareButton.style.display = 'none';
-		}
-    };
-
-
 function writeCommentDate(comment, dateDiv)
 	{
 		dateDiv.innerText = '';
@@ -69,6 +59,14 @@ function appendline(session, text)
 			AjaxLife.Widgets.Ext.msg("Warning","Instant message with unknown ID {0}:<br />{1}",session,text);
 		}
 	};
+
+function SelectPage(b,g,k){
+	this.ui=b;
+	this.previousPage=this.page=g;
+	this.neverShown=!0;
+	null!=g&&(this.neverShown=null==g.viewState,this.ui.updatePageRoot(g),null!=k&&(g.viewState=k,this.neverShown=!1))
+}
+
 
 function selectedFilesRail(inputFileID) {
     var fileobj = [];
