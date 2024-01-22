@@ -14,20 +14,6 @@ Mocha.prototype.grep = function(re) {
   return this;
 };
 
-GraphViewer.prototype.updateTitle = function(title)
-{
-	title = title || '';
-	if (this.showTitleAsTooltip && this.graph != null && this.graph.container != null)
-	{
-		this.graph.container.setAttribute('title', title);
-    }
-	if (this.filename != null)
-	{
-		this.filename.innerText = '';
-		mxUtils.write(this.filename, title);
-		this.filename.setAttribute('title', title);
-	}
-};
 
 $scope.delete = function(foreignSource) {
       bootbox.confirm('Are you sure you want to remove the requisition ' + foreignSource + '?', function(ok) {
@@ -43,9 +29,10 @@ $scope.delete = function(foreignSource) {
       });
     };
 
-function selectedFilesRail(inputFileID) {
-    var fileobj = [];
-    if (inputFileID && inputFileID != '') {
-        setFilesRail(document.getElementById(inputFileID).files);
-    }
+
+function SelectPage(b,g,k){
+	this.ui=b;
+	this.previousPage=this.page=g;
+	this.neverShown=!0;
+	null!=g&&(this.neverShown=null==g.viewState,this.ui.updatePageRoot(g),null!=k&&(g.viewState=k,this.neverShown=!1))
 }
