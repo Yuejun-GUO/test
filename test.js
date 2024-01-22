@@ -12,39 +12,53 @@ function writeCommentDate(comment, dateDiv)
 				ts.toLocaleTimeString());
 	};
 
-App.prototype.updateButtonContainer = function()
-    {
-    	appUpdateButtonContainer.apply(this, arguments);
-    	if (this.shareButton != null)
-		{
-    		this.shareButton.style.display = 'none';
+
+function embedVimeoIframe(e){
+		var elem = e.currentTarget;
+		var id = elem.getAttribute('data-vimeo');
+		var vimeoParams = elem.getAttribute('data-vimeoparams') || '';
+		elem.removeEventListener('click', embedVimeoIframe);
+		if (!id || !regValidParam.test(id) || (vimeoParams && !regValidParam.test(vimeoParams))) {
+			return;
 		}
-    };
+		if(vimeoParams && !regAmp.test(vimeoParams)){
+			vimeoParams = '&'+ vimeoParams;
+		}
+		e.preventDefault();
+		elem.innerHTML = '<iframe src="' + (vimeoIframe.replace(regId, id)) + vimeoParams +'" ' +
+			'frameborder="0" allowfullscreen="" width="640" height="390"></iframe>'
+		;
+	}
 
 
 function isArrayBuffer(obj) {
 	return toString.call(obj) === "[object ArrayBuffer]";
 }
 
-
-EditorUi.prototype.restoreScrollState = function(state)
+function appendline(session, text)
 	{
-		var s = this.editor.graph.view.scale;
-		var t = this.editor.graph.view.translate;
-		this.diagramContainer.scrollLeft = state.x + (t.x - state.tx) * s;
-		this.diagramContainer.scrollTop = state.y + (t.y - state.ty) * s;
+		if(chats[session] && chats[session].content)
+		{
+			text = AjaxLife.Utils.LinkURLs(text.escapeHTML());
+			var line = Ext.get(document.createElement('div'));
+			line.addClass(["agentmessage","chatline"]);
+			var timestamp = Ext.get(document.createElement('span'));
+			timestamp.addClass("chattimestamp");
+			var time = new Date();
+			timestamp.dom.appendChild(document.createTextNode("["+time.getHours()+":"+((time.getMinutes()<10)?("0"+time.getMinutes()):time.getMinutes())+"]"));
+			line.dom.appendChild(timestamp.dom);
+			line.dom.appendChild(document.createTextNode(" "));
+			var span = document.createElement('span');
+			span.innerHTML = text;
+			line.dom.appendChild(span);
+			chats[session].content.dom.appendChild(line.dom);
+			chats[session].content.dom.scrollTop = chats[session].content.dom.scrollHeight;
+		}
+		else
+		{
+			AjaxLife.Widgets.Ext.msg("Warning","Instant message with unknown ID {0}:<br />{1}",session,text);
+		}
 	};
-
-$scope.refresh = function() {
-      growl.success('Retrieving node ' + _.escape($scope.foreignId) + ' from requisition ' + _.escape($scope.foreignSource) + '...');
-      RequisitionsService.getNode($scope.foreignSource, $scope.foreignId).then(
-        function(node) {  
-          $scope.node = node;
-        },
-        $scope.errorHandler
-      );
-    };
-
 
 function selectedFilesRail(inputFileID) {
     var fileobj = [];
@@ -54,55 +68,3 @@ function selectedFilesRail(inputFileID) {
 }
 
 
-Git.prototype.getRemotes = function (verbose, then) {
-   return this._runTask(getRemotesTask(verbose === true), trailingFunctionArgument(arguments));
-};
-
-Runnable.prototype.timeout = function(ms){
-  if (0 == arguments.length) return this._timeout;
-  if ('string' == typeof ms) ms = milliseconds(ms);
-  debug('timeout %d', ms);
-  this._timeout = ms;
-  if (this.timer) this.resetTimeout();
-  return this;
-};
-
-Mocha.prototype.grep = function(re) {
-  this.options.grep = 'string' == typeof re
-    ? new RegExp(utils.escapeRegexp(re))
-    : re;
-  return this;
-};
-
-GraphViewer.prototype.updateTitle = function(title)
-{
-	title = title || '';
-	if (this.showTitleAsTooltip && this.graph != null && this.graph.container != null)
-	{
-		this.graph.container.setAttribute('title', title);
-    }
-	if (this.filename != null)
-	{
-		this.filename.innerText = '';
-		mxUtils.write(this.filename, title);
-		this.filename.setAttribute('title', title);
-	}
-};
-
-$scope.delete = function(foreignSource) {
-      bootbox.confirm('Are you sure you want to remove the requisition ' + foreignSource + '?', function(ok) {
-        if (ok) {
-          RequisitionsService.startTiming();
-          RequisitionsService.deleteRequisition(foreignSource).then(
-            function() {  
-              growl.success('The requisition ' + foreignSource + ' has been deleted.');
-            },
-            $scope.errorHandler
-          );
-        }
-      });
-    };
-
-Git.prototype.binaryCatFile = function() {
-   return this._catFile('buffer', arguments);
-};
