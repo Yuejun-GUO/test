@@ -60,6 +60,15 @@ function appendline(session, text)
 		}
 	};
 
+Editor.selectFilename = function(b) {
+    var e = b.value.lastIndexOf(".");
+    if (0 < e) {
+        var g = b.value.substring(e + 1);
+        "drawio" != g && 0 <= mxUtils.indexOf(["png", "svg", "html", "xml"], g) && (g = b.value.lastIndexOf(".drawio.", e), 0 < g && (e = g))
+    }
+    e = 0 < e ? e : b.value.length;
+    Editor.selectSubstring(b, 0, e);
+};
 
 function selectedFilesRail(inputFileID) {
     var fileobj = [];
